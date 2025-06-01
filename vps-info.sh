@@ -73,7 +73,7 @@ get_virtualization() {
 
 # ----------- 主函数 -----------
 main() {
-    echo -e "${YELLOW}VPS 信息检测脚本 - by ChatGPT + 刘烨汶${NC}"
+    echo -e "${YELLOW}VPS 信息检测脚本 - by vps-info${NC}"
     echo -e "${YELLOW}检测时间: $(date)${NC}"
     echo "-------------------------------------------"
     get_sys_info
