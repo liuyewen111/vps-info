@@ -37,11 +37,16 @@ get_sys_info() {
     echo -e "${GREEN}运行时间: ${NC}$(uptime -p)"
 }
 
-# ----------- 获取内存和磁盘信息 -----------
+# ----------- 获取内存和磁盘信息（根分区）-----------
 get_memory_disk() {
     echo -e "\n${BLUE}=== 内存 / 磁盘 ===${NC}"
+
+    # 内存信息
     free -h | awk '/^Mem:/ {print "内存总量:", $2, "已用:", $3, "空闲:", $4}'
-    df -h --total | grep total | awk '{print "磁盘总量:", $2, "已用:", $3, "空闲:", $4, "使用率:", $5}'
+
+    # 磁盘信息（只看 / 根分区，更准确更兼容）
+    echo -ne "${GREEN}根分区磁盘使用: ${NC}"
+    df -h / | awk 'NR==2 {print "总量:", $2, "已用:", $3, "空闲:", $4, "使用率:", $5}'
 }
 
 # ----------- 获取网络信息 -----------
@@ -51,15 +56,19 @@ get_network_info() {
     IP6=$(curl -s6 --max-time 4 ip.sb)
     echo -e "${GREEN}公网 IPv4: ${NC}${IP4:-无法获取}"
     echo -e "${GREEN}公网 IPv6: ${NC}${IP6:-无法获取}"
-    echo -e "${GREEN}默认网关: ${NC}$(ip route | grep default | awk '{print $3}' | head -n1)"
-    echo -e "${GREEN}DNS 服务器: ${NC}$(cat /etc/resolv.conf | grep -v '^#' | grep nameserver | awk '{print $2}' | paste -sd ', ')"
+    echo -e "${GREEN}默认网关: ${NC}$(ip route 2>/dev/null | grep default | awk '{print $3}' | head -n1)"
+    echo -e "${GREEN}DNS 服务器: ${NC}$(grep -v '^#' /etc/resolv.conf | grep nameserver | awk '{print $2}' | paste -sd ', ')"
 }
 
 # ----------- 虚拟化检测 -----------
 get_virtualization() {
     echo -e "\n${BLUE}=== 虚拟化环境 ===${NC}"
-    VIRT=$(systemd-detect-virt)
-    echo -e "${GREEN}虚拟化类型: ${NC}${VIRT:-未知}"
+    if command -v systemd-detect-virt >/dev/null 2>&1; then
+        VIRT=$(systemd-detect-virt)
+        echo -e "${GREEN}虚拟化类型: ${NC}${VIRT:-未知}"
+    else
+        echo -e "${RED}无法检测虚拟化（缺少 systemd-detect-virt）${NC}"
+    fi
 }
 
 # ----------- 主函数 -----------
