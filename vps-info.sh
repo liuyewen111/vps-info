@@ -52,7 +52,7 @@ print_line() {
 }
 
 get_sys_info() {
-    echo -e "${CYAN}🚀 系统信息${NC}"
+    echo -e "${CYAN}系统信息${NC}"
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         printf " %-15s : %s\n" "系统版本" "$PRETTY_NAME"
@@ -71,7 +71,7 @@ get_sys_info() {
 }
 
 get_memory_disk() {
-    echo -e "${CYAN}💾 内存 / 磁盘${NC}"
+    echo -e "${CYAN}内存 / 磁盘${NC}"
     MEM_INFO=$(free -h | awk '/^Mem:/ {print "总量: "$2", 已用: "$3", 空闲: "$4}')
     printf " %-15s : %s\n" "内存" "$MEM_INFO"
     DISK_INFO=$(df -h / | awk 'NR==2 {print "总量: "$2", 已用: "$3", 空闲: "$4", 使用率: "$5}')
@@ -80,7 +80,7 @@ get_memory_disk() {
 }
 
 get_network_info() {
-    echo -e "${CYAN}🌐 网络信息${NC}"
+    echo -e "${CYAN}网络信息${NC}"
     IP4=$(curl -s4 --max-time 4 ip.sb)
     IP6=$(curl -s6 --max-time 4 ip.sb)
     printf " %-15s : %s\n" "公网 IPv4" "${IP4:-获取失败}"
@@ -97,7 +97,7 @@ get_network_info() {
 }
 
 check_ports() {
-    echo -e "${CYAN}🔌 常用端口检测${NC}"
+    echo -e "${CYAN}常用端口检测${NC}"
     for port in 22 80 443; do
         if timeout 2 bash -c "</dev/tcp/127.0.0.1/$port" &>/dev/null; then
             echo -e " 端口 ${GREEN}$port${NC} : ${GREEN}开放${NC}"
@@ -109,7 +109,7 @@ check_ports() {
 }
 
 check_firewall() {
-    echo -e "${CYAN}🔒 防火墙状态${NC}"
+    echo -e "${CYAN}防火墙状态${NC}"
     if command -v ufw &>/dev/null; then
         echo "UFW 状态:"
         ufw status verbose
@@ -123,7 +123,7 @@ check_firewall() {
 }
 
 check_load() {
-    echo -e "${CYAN}📊 系统负载状态${NC}"
+    echo -e "${CYAN}系统负载状态${NC}"
     LOAD=$(uptime | awk -F 'load average:' '{print $2}' | xargs)
     PROC_NUM=$(ps -ef | wc -l)
     echo "当前负载 : $LOAD"
@@ -132,7 +132,7 @@ check_load() {
 }
 
 get_virtualization() {
-    echo -e "${CYAN}🖥️ 虚拟化类型${NC}"
+    echo -e "${CYAN}虚拟化类型${NC}"
     if command -v systemd-detect-virt &>/dev/null; then
         VIRT=$(systemd-detect-virt)
         echo "虚拟化类型 : $VIRT"
